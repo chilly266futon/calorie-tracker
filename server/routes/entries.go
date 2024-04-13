@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var entryCollection *mongo.Collection = openCollection(Client, "calories")
+var entryCollection *mongo.Collection = OpenCollection(Client, "calories")
 
 func AddEntry(c *gin.Context) {
 
