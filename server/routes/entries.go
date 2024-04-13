@@ -1,16 +1,17 @@
 package routes
 
 import (
-	"calorie-tracker/models"
 	"context"
 	"fmt"
+	"net/http"
+	"time"
+
+	"calorie-tracker/models"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"net/http"
-	"time"
 )
 
 var validate = validator.New()
