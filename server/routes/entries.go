@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"calorie-tracker/models"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -14,7 +15,30 @@ import (
 var entryCollection *mongo.Collection = OpenCollection(Client, "calories")
 
 func AddEntry(c *gin.Context) {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	var entry models.Entry
 
+	if err := c.BindJSON(&entry); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		fmt.Println(err)
+		return
+	}
+	validationErr := validate.Struct(entry)
+	if validationErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": validationErr.Error()})
+		fmt.Println(validationErr)
+		return
+	}
+	entry.ID = primitive.NewObjectID()
+	result, insertErr := entryCollection.InsertOne(ctx, entry)
+	if insertErr != nil {
+		msg := fmt.Sprintf("order item was not created")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+		fmt.Println(insertErr)
+		return
+	}
+	defer cancel()
+	c.JSON(http.StatusOK, result)
 }
 
 func GetEntries(c *gin.Context) {
@@ -73,7 +97,7 @@ func DeleteEntry(c *gin.Context) {
 
 	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 
-	entryCollection.DeleteOne(ctx, bson.M{"_id": docID})
+	result, err := entryCollection.DeleteOne(ctx, bson.M{"_id": docID})
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
