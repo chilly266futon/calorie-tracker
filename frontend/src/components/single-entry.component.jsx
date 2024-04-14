@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 
 import {Button, Card, Row, Col} from "react-bootstrap";
 
+
 const Entry =({entryData, setChangeIngredient, deleteSingleEntry, setChangeEntry}) => {
     return(
         <Card>
@@ -13,7 +14,7 @@ const Entry =({entryData, setChangeIngredient, deleteSingleEntry, setChangeEntry
                 <Col>Calories:{entryData !== undefined && entryData.calories}</Col>
                 <Col>Fat:{entryData !== undefined && entryData.fat}</Col>
                 <Col><Button onClick={()=> deleteSingleEntry(entryData._id)}>delete entry</Button></Col>
-                <Col><Button onClick={()=> ChangeIngredient}>change ingredients</Button></Col>
+                <Col><Button onClick={()=> setChangeIngredient}>change ingredients</Button></Col>
                 <Col><Button onClick={()=> setChangeEntry}>change entry</Button></Col>
             </Row>
         </Card>
@@ -35,6 +36,7 @@ const Entry =({entryData, setChangeIngredient, deleteSingleEntry, setChangeEntry
                 "id":entryData._id
             }
         )
-
     }
 }
+
+export default Entry;

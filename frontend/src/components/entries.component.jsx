@@ -6,24 +6,23 @@ import {Button, Form, Container, Modal} from "react-bootstrap";
 
 import Entry from './single-entry.component'
 
- const Entries =() =>{
+const Entries = () =>{
+    const [entries, setEntries] = useState([])
+    const [refreshData, setRefreshData] = useState(false)
+    const [changeEntry, setChangeEntry] = useState({"change": false, "id": 0})
+    const [changeIngredient, setChangeIngredient] = useState({"change": false, "id": 0})
+    const [newIngredientName, setNewIngredientName] = useState("")
+    const [addNewEntry, setAddNewEntry] = useState(false)
+    const [newEntry, setNewEntry] = useState({"dish":"", "ingredients":"", "calories":0, fat:0})
 
-     const [entries, setEntries] = useState([])
-     const [refreshData, setRefreshData] = useState(false)
-     const [changeEntry, setChangeEntry] = useState({"change": false, "id": 0})
-     const [changeIngredient, setChangeIngredient] = useState({"change": false, "id": 0})
-     const [newIngredientName, setNewIngredientName] = useState("")
-     const [addNewEntry, setAddNewEntry] = useState(false)
-     const [newEntry, setNewEntry] = useState({"dish":"", "ingredients":"", "calories":0, fat:0})
+    useEffect(() => {
+        getAllEntries();
+    }, [])
 
-     useEffect(() => {
-         getAllEntries();
-     }, [])
-
-     if (refreshData){
-         setRefreshData(false);
-         getAllEntries();
-     }
+    if (refreshData){
+        setRefreshData(false);
+        getAllEntries();
+    }
 
     return(
         <div>
@@ -88,71 +87,72 @@ import Entry from './single-entry.component'
                         <Form.Control type="number" onChange={(event) => {newEntry.fat = event.target.value}}></Form.Control>
                     </Form.Group>
                     <Button onClick={() => changeSingleEntry()}>Change</Button>
-                    <Button onClick={() => setChangeEntry({"change": flase, "id": 0})} centered></Button>
+                    <Button onClick={() => setChangeEntry({"change": false, "id": 0})} centered></Button>
                 </Modal.Body>
             </Modal>
         </div>
     );
 
-     function changeIngredientForEntry() {
-         changeIngredient.change = false
-         var url = "http://localhost:8000/ingredients/update/" +changeIngredient.id
-         axios.put(url, {
-             "ingredients": newIngredientName
-         }).then(response => {
-             console.log(response.status)
-             if (response.status == 200) {
-                 setRefreshData(true)
-             }
-         })
-     }
+    function changeIngredientForEntry() {
+        changeIngredient.change = false
+        var url = "http://localhost:8000/ingredients/update/" +changeIngredient.id
+        axios.put(url, {
+            "ingredients": newIngredientName
+        }).then(response => {
+            console.log(response.status)
+            if (response.status == 200) {
+                setRefreshData(true)
+            }
+        })
+    }
 
-     function changeSingleEntry() {
-         changeEntry.change = false
-         var url = "http://localhost:8000/entry/update/" + changeIngredient.id
-         axios.put(url, newEntry)
-             .then(response =>{
-                 if (response.status == 200){
-                     setRefreshData(true)
-                 }
-             })
-     }
+    function changeSingleEntry() {
+        changeEntry.change = false
+        var url = "http://localhost:8000/entry/update/" + changeIngredient.id
+        axios.put(url, newEntry)
+            .then(response =>{
+                if (response.status == 200){
+                    setRefreshData(true)
+                }
+            })
+    }
 
-     function addSingleEntry() {
-         setAddNewEntry(false)
-         var url = "http://localhost:8000/entry/create"
-         axios.post(url, {
-             "ingredients": newEntry.ingredients,
-             "dish": newEntry.dish,
-             "calories": newEntry.calories,
-             "fat": parseInt(newEntry.fat)
-         }).then(response => {
-             if(response.status == 200){
-                 setRefreshData(true)
-             }
-         })
-     }
+    function addSingleEntry() {
+        setAddNewEntry(false)
+        var url = "http://localhost:8000/entry/create"
+        axios.post(url, {
+            "ingredients": newEntry.ingredients,
+            "dish": newEntry.dish,
+            "calories": newEntry.calories,
+            "fat": parseInt(newEntry.fat)
+        }).then(response => {
+            if(response.status == 200){
+                setRefreshData(true)
+            }
+        })
+    }
 
-     function deleteSingleEntry(id) {
-         var url = "http://localhost:8000/entry/delete/" + id
-         axios.delete(url, {
+    function deleteSingleEntry(id) {
+        var url = "http://localhost:8000/entry/delete/" + id
+        axios.delete(url, {
 
-         }).then(response => {
-             if (response.status == 200){
-                 setRedreshData(true)
-             }
-         })
-     }
+        }).then(response => {
+            if (response.status == 200){
+                setRefreshData(true)
+            }
+        })
+    }
 
-     function getAllEntries(){
-         var url = "http://localhost:8000/entries"
-         axios.get(url, {
-             responseType: 'json'
-         }).then(response => {
-             if (response.status == 200){
-                 setEntries(response.data)
-             }
-         })
-     }
- }
+    function getAllEntries(){
+        var url = "http://localhost:8000/entries"
+        axios.get(url, {
+            responseType: 'json'
+        }).then(response => {
+            if (response.status == 200){
+                setEntries(response.data)
+            }
+        })
+    }
+}
 
+export default Entries;
